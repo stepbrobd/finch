@@ -28,7 +28,7 @@ func InitialModel(algo *genetic.Algo) Model {
 
 func (m Model) Init() tea.Cmd {
 	return tea.Batch(
-		m.Start(),
+		m.Generation(),
 		m.Watch.Init(),
 		tea.EnterAltScreen,
 	)
@@ -37,18 +37,19 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case AlgoMsg:
-		m, cmd := m.ModelUpdate()
-		return m, cmd
+		m.Msg = msg
+		return m, m.Generation()
 	case tea.KeyMsg:
 		switch msg.String() {
-		// esc, ctrl+c
 		case "esc", "ctrl+c":
 			return m, tea.Quit
 		}
+	default:
+		var cmd tea.Cmd
+		m.Watch, cmd = m.Watch.Update(msg)
+		return m, cmd
 	}
-	var cmd tea.Cmd
-	m.Watch, cmd = m.Watch.Update(msg)
-	return m, cmd
+	return m, nil
 }
 
 func (m Model) View() string {
@@ -63,9 +64,15 @@ func (m Model) View() string {
 		Align(lipgloss.Center).
 		Render("Finch") + "\n\n"
 
-	view += "Elapsed: " + m.Watch.View() + fmt.Sprintf(" Generation: %d", (m.Msg.Generation)) + "\n\n"
+	view += "Elapsed: " + m.Watch.View() +
+		fmt.Sprintf(" | Generation: %d", (m.Msg.Generation)) +
+		fmt.Sprintf(" | Error: %f", m.Msg.ErrorRate) +
+		"\n\n"
 
-	view += "Error: " + fmt.Sprintf("%f", m.Msg.Err) + "\n\n"
+	view += "Biases:\n"
+	for _, layer := range m.Msg.Biases {
+		view += fmt.Sprintf("%v\n", layer)
+	}
 
 	return lipgloss.PlaceHorizontal(w, lipgloss.Center, view)
 }
