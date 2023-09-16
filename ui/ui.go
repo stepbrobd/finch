@@ -3,19 +3,23 @@ package ui
 import (
 	"fmt"
 
+	textinput "github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Model struct {
-	choices  []string
-	cursor   int
-	selected map[int]struct{}
+	// TODO: change definition to the one defined in genetics/genetics.go
+	model  [][]float32       // the model
+	inputs []textinput.Model // field count is equal to the neurons in the input layer
 }
 
 func InitialModel() Model {
 	return Model{
-		choices:  []string{"Buy carrots", "Buy celery", "Buy kohlrabi"},
-		selected: make(map[int]struct{}),
+		model: [][]float32{
+			{0.0, 0.0, 0.0},
+			{0.0, 0.0, 0.0, 0.0, 0.0},
+			{0.0, 0.0},
+		},
 	}
 }
 
@@ -31,26 +35,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			return m, tea.Quit
 
-		// k, arrow up
-		case "k", "up":
-			if m.cursor > 0 {
-				m.cursor--
-			}
-
-		// j, arrow down
-		case "j", "down":
-			if m.cursor < len(m.choices)-1 {
-				m.cursor++
-			}
-
-		// space, enter
-		case " ", "enter":
-			_, ok := m.selected[m.cursor]
-			if ok {
-				delete(m.selected, m.cursor)
-			} else {
-				m.selected[m.cursor] = struct{}{}
-			}
 		}
 	}
 
@@ -58,23 +42,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	view := "What should we buy at the market?\n\n"
+	view := StyleBlue500.Render("Finch") + "\n\n"
 
-	for i, choice := range m.choices {
-		cursor := " "
-		if m.cursor == i {
-			cursor = ">"
+	// print vertically with padding
+	for _, row := range m.model {
+		for _, col := range row {
+			view += fmt.Sprintf("%f ", col)
 		}
-
-		checked := " "
-		if _, ok := m.selected[i]; ok {
-			checked = "x"
-		}
-
-		view += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
+		view += "\n"
 	}
-
-	view += "\nPress q to quit.\n"
 
 	return view
 }

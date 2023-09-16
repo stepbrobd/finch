@@ -9,8 +9,6 @@ import (
 )
 
 func main() {
-	fmt.Println("Finch")
-
 	p := tea.NewProgram(ui.InitialModel())
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("error occurred when trying to start UI: %v", err)
