@@ -30,6 +30,7 @@ func (m Model) Init() tea.Cmd {
 	return tea.Batch(
 		m.Generation(),
 		m.Watch.Init(),
+		tea.ClearScreen,
 		tea.EnterAltScreen,
 	)
 }
@@ -61,17 +62,28 @@ func (m Model) View() string {
 	view := lipgloss.NewStyle().
 		Bold(true).
 		Underline(true).
-		Align(lipgloss.Center).
 		Render("Finch") + "\n\n"
 
 	view += "Elapsed: " + m.Watch.View() +
 		fmt.Sprintf(" | Generation: %d", (m.Msg.Generation)) +
-		fmt.Sprintf(" | Error: %f", m.Msg.ErrorRate) +
-		"\n\n"
+		fmt.Sprintf(" | Error: %.25f", m.Msg.ErrorRate) +
+		"\n\n\n"
 
-	view += "Biases:\n"
-	for _, layer := range m.Msg.Biases {
-		view += fmt.Sprintf("%v\n", layer)
+	view += "Weights" + "\n\n"
+	for i := range m.Msg.Weights {
+		view += MkView(m.Model.GetWeights(), i) + "\n"
+	}
+	view += "\n\n"
+
+	view += "Biases" + "\n\n"
+	for i := range m.Msg.Biases {
+		view += MkView(m.Model.GetBiases(), i) + "\n"
+	}
+	view += "\n\n"
+
+	view += "Outputs" + "\n\n"
+	for i := range m.Msg.Outputs {
+		view += MkView(m.Model.GetOutputs(), i) + "\n"
 	}
 
 	return lipgloss.PlaceHorizontal(w, lipgloss.Center, view)
