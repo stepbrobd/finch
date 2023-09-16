@@ -3,22 +3,24 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
 
+	"github.com/stepbrobd/finch/genetic"
+
 	tea "github.com/charmbracelet/bubbletea"
-	log "github.com/charmbracelet/log"
 	ui "github.com/stepbrobd/finch/ui"
 )
 
 func main() {
-	log.SetLevel(log.DebugLevel)
-
 	var (
-		input  = flag.Int("input", 0, "numbers of neurons in input layer\nexample: -input=1")
-		output = flag.Int("output", 0, "numbers of neurons in output layer\nexample: -output=1")
-		hidden = flag.String("hidden", "", "numbers of neurons in hidden layer\nexample: -hidden=1,1,1")
+		input      = flag.Int("input", 0, "numbers of neurons in input layer\nexample: -input=1")
+		output     = flag.Int("output", 0, "numbers of neurons in output layer\nexample: -output=1")
+		hidden     = flag.String("hidden", "", "numbers of neurons in hidden layer\nexample: -hidden=1,1,1")
+		population = flag.Int("population", 0, "numbers of individuals the population\nexample: -population=100")
+		mutation   = flag.Float64("mutation", 0.0, "mutation rate, must be between 0.0 and 1.0\nexample: -mutation=0.01")
 	)
 
 	flag.Usage = func() {
@@ -32,11 +34,8 @@ func main() {
 	}
 
 	flag.Parse()
-	flag.VisitAll(func(f *flag.Flag) {
-		log.Debugf("%s: %v", f.Name, f.Value)
-	})
 
-	required := []string{"input", "output", "hidden"}
+	required := []string{"input", "output", "hidden", "population", "mutation"}
 	seen := make(map[string]bool)
 	flag.Visit(func(f *flag.Flag) { seen[f.Name] = true })
 	for _, req := range required {
@@ -53,14 +52,18 @@ func main() {
 		}
 		specs = append(specs, v)
 	}
+	specs = append([]int{*input}, append(specs, *output)...)
 
-	log.Debugf("input: %d", *input)
-	log.Debugf("output: %d", *output)
-	log.Debugf("hidden: %v", specs)
+	m := genetic.NewAlgo(
+		float32(*mutation),
+		*population,
+		specs,
+		[][]float32{{0.0}, {1.0}},
+		[][]float32{{1.0}, {0.0}},
+	)
 
-	p := tea.NewProgram(ui.InitialModel())
+	p := tea.NewProgram(ui.InitialModel(&m))
 	if _, err := p.Run(); err != nil {
-		fmt.Printf("error occurred when trying to start UI: %v", err)
-		os.Exit(1)
+		log.Fatalf("error occurred when trying to start UI: %v", err)
 	}
 }

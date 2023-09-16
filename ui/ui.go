@@ -3,17 +3,17 @@ package ui
 import (
 	"github.com/stepbrobd/finch/genetic"
 
-	textinput "github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Model struct {
-	Model  genetic.Net
-	Inputs []textinput.Model // field count is equal to the neurons in the input layer
+	Model genetic.Algo
 }
 
-func InitialModel() Model {
-	return Model{}
+func InitialModel(algo *genetic.Algo) Model {
+	return Model{
+		Model: *algo,
+	}
 }
 
 func (m Model) Init() tea.Cmd {
@@ -35,7 +35,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	view := StyleBlue500.Render("Finch") + "\n\n"
+	view := StyleBlue500.Render("Finch\n")
 
 	return view
 }
