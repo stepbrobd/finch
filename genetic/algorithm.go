@@ -14,7 +14,7 @@ type Algo struct {
 // exampleInputs: The examples used to by the fitness function to calculate a given networks total error
 // expectedOutputs: The corresponeding correct outputs to the given exampleInputs
 // Returns: A initialized algorithm
-func NewAlgo(mutationRate float32, individuals int, networkLayers []int, exampleInputs, expectedOutputs [][]float32) Algo {
+func NewAlgo(mutationRate float32, individuals int, networkLayers []int, exampleInputs [][]float32, expectedOutputs [][]float32) Algo {
 	var a Algo
 	a.Generations = 0
 	a.MutationRate = mutationRate
