@@ -21,20 +21,19 @@ func NewNet(sizes []int) Net {
 	n.Sizes = make([]int, len(sizes))
 	copy(n.Sizes, sizes)
 	// Calculate slice sizes bases on given layer sizes
-	leng := 0
-	max := sizes[0]
+	lenVals := 0
+	lenOuts := 0
 	for lay := 1; lay < len(sizes); lay++ {
-		if sizes[lay] > max {
-			max = sizes[lay]
-		}
+		// Number of Outputs need for layer
+		lenOuts += sizes[lay]
 		// Number of weights and biases needed for layer
-		leng += sizes[lay-1]*sizes[lay] + sizes[lay]
+		lenVals += sizes[lay-1]*sizes[lay] + sizes[lay]
 	}
 	// Allocate elements for weights and biases.
-	n.Values = make([]float32, leng, leng)
+	n.Values = make([]float32, lenVals, lenVals)
 	// Allocate elements for inputs and outputs.
-	n.Inputs = make([]float32, max, max)
-	n.Outputs = make([]float32, max, max)
+	n.Inputs = make([]float32, lenOuts, lenOuts)
+	n.Outputs = make([]float32, lenOuts, lenOuts)
 	return n
 }
 
