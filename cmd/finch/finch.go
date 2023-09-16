@@ -11,10 +11,12 @@ import (
 	"github.com/stepbrobd/finch/genetic"
 
 	tea "github.com/charmbracelet/bubbletea"
+	gen "github.com/stepbrobd/finch/genetic"
 	ui "github.com/stepbrobd/finch/ui"
 )
 
 func main() {
+	gen.Test()
 	var (
 		input      = flag.Int("input", 0, "numbers of neurons in input layer\nexample: -input=1")
 		output     = flag.Int("output", 0, "numbers of neurons in output layer\nexample: -output=1")

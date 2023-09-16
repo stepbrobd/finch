@@ -24,11 +24,12 @@ func NewAlgo(mutationRate float32, individuals int, networkLayers []int, example
 	return a
 }
 
-// Returns: the number of generations that have been ran.
+// Returns: the number of generations that have been ran
 func (a *Algo) GetNumGens() int {
 	return a.Generations
 }
 
+// Returns: The weights of the algorithms network. The first slice contains the first hidden layers weights. The last slice contains the outputs layers weights
 func (a *Algo) GetWeights() [][]float32 {
 	network := a.Population.Nets[0]
 	layers := make([][]float32, 0)
@@ -40,6 +41,23 @@ func (a *Algo) GetWeights() [][]float32 {
 		layers = append(layers, layerWeights)
 		numberBiases := network.Sizes[idx]
 		valIdx += numberWeights + numberBiases
+	}
+	return layers
+}
+
+// Returns: The biases of the algorithms network. The first slice contains the first hidden layers biases. The last slice contains the outputs layers weights
+func (a *Algo) GetBiases() [][]float32 {
+	network := a.Population.Nets[0]
+	layers := make([][]float32, 0)
+	valIdx := 0
+	for idx := 1; idx < len(network.Sizes); idx++ {
+		numberWeights := network.Sizes[idx-1] * network.Sizes[idx]
+		valIdx += numberWeights
+		numberBiases := network.Sizes[idx]
+		layerBiases := make([]float32, numberBiases, numberBiases)
+		copy(layerBiases, network.Values[valIdx:])
+		layers = append(layers, layerBiases)
+		valIdx += numberBiases
 	}
 	return layers
 }
