@@ -10,7 +10,7 @@ func Evolve(gens, num int, sizes []int, examInputs, expecOutputs [][]float32, ra
 	curErr := 0.0
 	p := Init(num, sizes)
 	for gen < gens && term == false {
-		p.SelectCrossReplace()
+		p.Crossover()
 		p.Mutate(rate)
 		p.FitEval(examInputs, expecOutputs)
 		p.Terminate(err, &curErr, &term)

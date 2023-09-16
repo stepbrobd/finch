@@ -41,9 +41,7 @@ func main() {
 	flag.Visit(func(f *flag.Flag) { seen[f.Name] = true })
 	for _, req := range required {
 		if !seen[req] {
-			fmt.Fprintf(os.Stderr, "missing required -%s argument/flag\n", req)
-			flag.Usage()
-			os.Exit(2)
+			log.Fatalf("missing required -%s argument/flag\n", req)
 		}
 	}
 
