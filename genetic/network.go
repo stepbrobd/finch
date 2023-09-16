@@ -64,3 +64,16 @@ func (n Net) FitFunc(examInputs, expecOutputs [][]float32) float64 {
 	}
 	return n.Error
 }
+
+func (n Net) Crossover(male, female Net) {
+	copy(n.Values, female.Values)
+	copy(n.Values, male.Values[:RandIntRange(1, len(female.Values)-1)])
+}
+
+func (n Net) Mutate(rate float32) {
+	for idx := 0; idx < len(n.Values); idx++ {
+		if RandFloatRange(0.0, 1.0) <= rate {
+			n.Values[idx] += RandFloatRange(-0.25, 0.25)
+		}
+	}
+}
