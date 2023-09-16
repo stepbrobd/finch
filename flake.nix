@@ -40,6 +40,7 @@
           packages = with pkgs; [
             go_1_21
             gopls
+            delve
             gomod2nix.packages.${system}.default
           ];
         };
