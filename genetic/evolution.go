@@ -1,5 +1,8 @@
 package genetic
 
+import (
+	"fmt"
+)
 
 func Evolve(gens, num int, sizes []int, examInputs, expecOutputs [][]float32, rate float32, err float64) {
 	gen := 0
