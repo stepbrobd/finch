@@ -1,5 +1,7 @@
 package genetic
 
+import "sync"
+
 type Net struct {
 	// Holds total error of network
 	Error float64
@@ -35,7 +37,7 @@ func NewNet(sizes []int) Net {
 	return n
 }
 
-func (n Net) ForProp(inputs []float32) []float32 {
+func (n *Net) ForProp(inputs []float32) []float32 {
 	// First layer uses inputs as activations
 	valIdx := 0
 	insIdx := 0
@@ -53,7 +55,7 @@ func (n Net) ForProp(inputs []float32) []float32 {
 	return n.Outputs[insIdx:]
 }
 
-func (n Net) FitFunc(examInputs, expecOutputs [][]float32) float64 {
+func (n *Net) FitFunc(examInputs, expecOutputs [][]float32, wg *sync.WaitGroup) {
 	n.Error = 0.0
 	for num := 0; num < len(examInputs); num++ {
 		outputs := n.ForProp(examInputs[num])
@@ -61,15 +63,15 @@ func (n Net) FitFunc(examInputs, expecOutputs [][]float32) float64 {
 			n.Error += float64(Abs(expecOutputs[num][idx] - outputs[idx]))
 		}
 	}
-	return n.Error
+	wg.Done()
 }
 
-func (n Net) Crossover(male, female Net) {
+func (n *Net) Crossover(male, female Net) {
 	copy(n.Values, female.Values)
 	copy(n.Values, male.Values[:RandIntRange(1, len(female.Values)-1)])
 }
 
-func (n Net) Mutate(rate float32) {
+func (n *Net) Mutate(rate float32) {
 	for idx := 0; idx < len(n.Values); idx++ {
 		if RandFloatRange(0.0, 1.0) <= rate {
 			n.Values[idx] += RandFloatRange(-0.25, 0.25)

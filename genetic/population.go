@@ -3,6 +3,7 @@ package genetic
 import (
 	"os"
 	"sort"
+	"sync"
 )
 
 type Pop struct {
@@ -26,9 +27,12 @@ func Init(number int, sizes []int) Pop {
 }
 
 func (p Pop) FitEval(examInputs, expecOutputs [][]float32) {
+	var wg sync.WaitGroup
 	for num := 0; num < len(p.Nets); num++ {
-		p.Nets[num].Error = p.Nets[num].FitFunc(examInputs, expecOutputs)
+		wg.Add(1)
+		go p.Nets[num].FitFunc(examInputs, expecOutputs, &wg)
 	}
+	wg.Wait()
 	sort.Slice(p.Nets, func(i, j int) bool {
 		return p.Nets[i].Error < p.Nets[j].Error
 	})
