@@ -38,18 +38,13 @@ func (p Pop) SelectCrossReplace() {
 	for idx := len(p.Nets) / 2; idx < len(p.Nets); idx++ {
 		male := p.Nets[RandIntRange(0, len(p.Nets)/2)]
 		female := p.Nets[RandIntRange(0, len(p.Nets)/2)]
-		copy(p.Nets[idx].Values, female.Values)
-		copy(p.Nets[idx].Values, male.Values[:RandIntRange(1, len(female.Values)-1)])
+		p.Nets[idx].Crossover(male, female)
 	}
 }
 
 func (p Pop) Mutate(rate float32) {
 	for idx := len(p.Nets) / 2; idx < len(p.Nets); idx++ {
-		for idy := 0; idy < len(p.Nets[idx].Values); idy++ {
-			if RandFloatRange(0.0, 1.0) <= rate {
-				p.Nets[idx].Values[idy] += RandFloatRange(-0.25, 0.25)
-			}
-		}
+		p.Nets[idx].Mutate(rate)
 	}
 }
 

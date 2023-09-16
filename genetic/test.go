@@ -1,6 +1,6 @@
 package genetic
 
-func test() {
+func Test() {
 	gens := 1024
 	popSize := 1024
 
