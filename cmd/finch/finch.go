@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/csv"
 	"flag"
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -14,13 +16,54 @@ import (
 	ui "github.com/stepbrobd/finch/ui"
 )
 
+func ReadCSV(filename string) ([][]float32, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+
+	// Read the header row
+	_, err = reader.Read()
+	if err != nil {
+		return nil, err
+	}
+
+	var data [][]float32
+	for {
+		record, err := reader.Read()
+		if err != nil {
+			break
+		}
+
+		var row []float32
+		for _, valueStr := range record {
+			value, err := strconv.ParseFloat(valueStr, 32)
+			if err != nil {
+				return nil, err
+			}
+			row = append(row, float32(value))
+		}
+
+		data = append(data, row)
+	}
+
+	return data, nil
+}
+
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	var (
 		input      = flag.Int("input", 0, "numbers of neurons in input layer\nexample: -input=1")
 		output     = flag.Int("output", 0, "numbers of neurons in output layer\nexample: -output=1")
 		hidden     = flag.String("hidden", "", "numbers of neurons in hidden layer\nexample: -hidden=1,1,1")
 		population = flag.Int("population", 0, "numbers of individuals the population\nexample: -population=100")
 		mutation   = flag.Float64("mutation", 0.0, "mutation rate, must be between 0.0 and 1.0\nexample: -mutation=0.01")
+		example    = flag.String("example", "", "training example filename, a csv\nexample: -example=./example.csv")
+		expected   = flag.String("expected", "", "training label filename, a csv\nexample: -expected=./expected.csv")
 	)
 
 	flag.Usage = func() {
@@ -62,12 +105,22 @@ func main() {
 	}
 	specs = append([]int{*input}, append(specs, *output)...)
 
+	trainExamples, err := ReadCSV(*example)
+	if err != nil {
+		log.Fatalf("error occurred when trying to read training examples: %v", err)
+	}
+
+	trainLabels, err := ReadCSV(*expected)
+	if err != nil {
+		log.Fatalf("error occurred when trying to read training labels: %v", err)
+	}
+
 	m := genetic.NewAlgo(
 		float32(*mutation),
 		*population,
 		specs,
-		[][]float32{{0.0, 0.0}, {0.0, 1.0}, {1.0, 0.0}, {1.0, 1.0}},
-		[][]float32{{1.0}, {0.0}, {0.0}, {0.0}},
+		trainExamples,
+		trainLabels,
 	)
 
 	p := tea.NewProgram(ui.InitialModel(&m))
