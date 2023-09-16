@@ -1,7 +1,7 @@
 package genetic
 
 type Algo struct {
-	Generations     int
+	Generations     *int
 	ExampleInputs   [][]float32
 	ExpectedOutputs [][]float32
 	MutationRate    float32
@@ -15,8 +15,9 @@ type Algo struct {
 // expectedOutputs: The corresponeding correct outputs to the given exampleInputs
 // Returns: A initialized algorithm
 func NewAlgo(mutationRate float32, individuals int, networkLayers []int, exampleInputs [][]float32, expectedOutputs [][]float32) Algo {
+	var x int = 0
 	var a Algo
-	a.Generations = 0
+	a.Generations = &x
 	a.MutationRate = mutationRate
 	a.Population = NewPop(individuals, networkLayers)
 	a.ExampleInputs = exampleInputs
@@ -26,7 +27,7 @@ func NewAlgo(mutationRate float32, individuals int, networkLayers []int, example
 
 // Returns: the number of generations that have been ran
 func (a *Algo) GetNumGens() int {
-	return a.Generations
+	return *a.Generations
 }
 
 // Returns: The weights of the algorithms network. The first slice contains the first hidden layers weights. The last slice contains the outputs layers weights
@@ -85,6 +86,6 @@ func (a *Algo) RunGens(number int) float64 {
 		a.Population.Mutate(a.MutationRate)
 		a.Population.FitEval(a.ExampleInputs, a.ExpectedOutputs)
 	}
-	a.Generations += number
+	*a.Generations += number
 	return a.Population.Nets[0].Error
 }

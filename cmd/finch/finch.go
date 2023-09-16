@@ -45,8 +45,16 @@ func main() {
 	}
 
 	specs := make([]int, 0)
-	for _, c := range strings.Split(*hidden, ",") {
-		v, err := strconv.Atoi(c)
+	if strings.Contains(*hidden, ",") {
+		for _, c := range strings.Split(*hidden, ",") {
+			v, err := strconv.Atoi(c)
+			if err != nil {
+				log.Fatalf("invalid hidden layer specification: %v", err)
+			}
+			specs = append(specs, v)
+		}
+	} else {
+		v, err := strconv.Atoi(*hidden)
 		if err != nil {
 			log.Fatalf("invalid hidden layer specification: %v", err)
 		}
