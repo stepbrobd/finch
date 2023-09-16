@@ -45,7 +45,7 @@ func (a *Algo) GetWeights() [][]float32 {
 	return layers
 }
 
-// Returns: The biases of the algorithms network. The first slice contains the first hidden layers biases. The last slice contains the outputs layers weights
+// Returns: The biases of the algorithms network. The first slice contains the first hidden layers biases. The last slice contains the outputs layers biases
 func (a *Algo) GetBiases() [][]float32 {
 	network := a.Population.Nets[0]
 	layers := make([][]float32, 0)
@@ -58,6 +58,21 @@ func (a *Algo) GetBiases() [][]float32 {
 		copy(layerBiases, network.Values[valIdx:])
 		layers = append(layers, layerBiases)
 		valIdx += numberBiases
+	}
+	return layers
+}
+
+// Returns: The outputs of the algorithms network. The first slice contains the first hidden layers outputs. The last slice contains the outputs layers outputs
+func (a *Algo) GetOutputs() [][]float32 {
+	network := a.Population.Nets[0]
+	layers := make([][]float32, 0)
+	outIdx := 0
+	for idx := 1; idx < len(network.Sizes); idx++ {
+		numberOutputs := network.Sizes[idx]
+		layerOutputs := make([]float32, numberOutputs, numberOutputs)
+		copy(layerOutputs, network.Outputs[outIdx:])
+		layers = append(layers, layerOutputs)
+		outIdx += numberOutputs
 	}
 	return layers
 }
