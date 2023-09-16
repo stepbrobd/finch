@@ -34,7 +34,7 @@ func (p Pop) FitEval(examInputs, expecOutputs [][]float32) {
 	})
 }
 
-func (p Pop) SelectCrossReplace() {
+func (p Pop) Crossover() {
 	for idx := len(p.Nets) / 2; idx < len(p.Nets); idx++ {
 		male := p.Nets[RandIntRange(0, len(p.Nets)/2)]
 		female := p.Nets[RandIntRange(0, len(p.Nets)/2)]
