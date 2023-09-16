@@ -1,6 +1,8 @@
 package genetic
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func Test() {
 	maxGens := 1024
