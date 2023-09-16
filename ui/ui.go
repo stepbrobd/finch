@@ -16,6 +16,7 @@ import (
 type Model struct {
 	Model genetic.Algo
 	Watch stopwatch.Model
+	Msg   AlgoMsg
 }
 
 func InitialModel(algo *genetic.Algo) Model {
@@ -27,6 +28,7 @@ func InitialModel(algo *genetic.Algo) Model {
 
 func (m Model) Init() tea.Cmd {
 	return tea.Batch(
+		m.Start(),
 		m.Watch.Init(),
 		tea.EnterAltScreen,
 	)
@@ -34,6 +36,9 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case AlgoMsg:
+		m, cmd := m.ModelUpdate()
+		return m, cmd
 	case tea.KeyMsg:
 		switch msg.String() {
 		// esc, ctrl+c
@@ -43,7 +48,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 	var cmd tea.Cmd
 	m.Watch, cmd = m.Watch.Update(msg)
-
 	return m, cmd
 }
 
@@ -58,7 +62,10 @@ func (m Model) View() string {
 		Underline(true).
 		Align(lipgloss.Center).
 		Render("Finch") + "\n\n"
-	view += "Elapsed: " + m.Watch.View() + fmt.Sprintf(" Generation: %d", (m.Model.GetNumGens())) + "\n\n"
+
+	view += "Elapsed: " + m.Watch.View() + fmt.Sprintf(" Generation: %d", (m.Msg.Generation)) + "\n\n"
+
+	view += "Error: " + fmt.Sprintf("%f", m.Msg.Err) + "\n\n"
 
 	return lipgloss.PlaceHorizontal(w, lipgloss.Center, view)
 }
