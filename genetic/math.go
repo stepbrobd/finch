@@ -24,12 +24,13 @@ func Add(vectorA, vectorB, vectorC []float32, n int) int {
 	return n
 }
 
-func ReLU(vectorA []float32, n int) {
+func ReLU(vectorA []float32, n int) int {
 	for row := 0; row < n; row++ {
 		if vectorA[row] < 0.0 {
 			vectorA[row] = 0.0
 		}
 	}
+	return n
 }
 
 func Abs(value float32) float32 {

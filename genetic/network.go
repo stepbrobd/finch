@@ -11,7 +11,6 @@ type Net struct {
 	// 1ST_HIDDEN_WEIGHTS 1ST_HIDDEN_BIASES 2ND_HIDDEN_WEIGHTS 2ND_HIDDEN_BIASES ... OUTPUT_WEIGHTS OUTPUT>
 	Values []float32
 	// Holds intermediate calculations for forward propagation
-	Inputs  []float32
 	Outputs []float32
 }
 
@@ -31,8 +30,7 @@ func NewNet(sizes []int) Net {
 	}
 	// Allocate elements for weights and biases.
 	n.Values = make([]float32, lenVals, lenVals)
-	// Allocate elements for inputs and outputs.
-	n.Inputs = make([]float32, lenOuts, lenOuts)
+	// Allocate elements for outputs.
 	n.Outputs = make([]float32, lenOuts, lenOuts)
 	return n
 }
@@ -40,17 +38,19 @@ func NewNet(sizes []int) Net {
 func (n Net) ForProp(inputs []float32) []float32 {
 	// First layer uses inputs as activations
 	valIdx := 0
+	insIdx := 0
+	outIdx := 0
 	valIdx += Mult(n.Values[valIdx:], inputs, n.Outputs, n.Sizes[1], n.Sizes[0])
-	valIdx += Add(n.Values[valIdx:], n.Outputs, n.Inputs, n.Sizes[1])
-	ReLU(n.Inputs, n.Sizes[1])
+	valIdx += Add(n.Values[valIdx:], n.Outputs, n.Outputs, n.Sizes[1])
+	outIdx += ReLU(n.Outputs, n.Sizes[1])
 	for lay := 2; lay < len(n.Sizes); lay++ {
 		// All other layers use prior layers activations
-		valIdx += Mult(n.Values[valIdx:], n.Inputs, n.Outputs, n.Sizes[lay], n.Sizes[lay-1])
-		valIdx += Add(n.Values[valIdx:], n.Outputs, n.Inputs, n.Sizes[lay])
-		ReLU(n.Inputs, n.Sizes[lay])
+		valIdx += Mult(n.Values[valIdx:], n.Outputs[insIdx:], n.Outputs[outIdx:], n.Sizes[lay], n.Sizes[lay-1])
+		valIdx += Add(n.Values[valIdx:], n.Outputs[outIdx:], n.Outputs[outIdx:], n.Sizes[lay])
+		insIdx = outIdx
+		outIdx += ReLU(n.Outputs[outIdx:], n.Sizes[lay])
 	}
-	copy(n.Outputs, n.Inputs)
-	return n.Outputs
+	return n.Outputs[insIdx:]
 }
 
 func (n Net) FitFunc(examInputs, expecOutputs [][]float32) float64 {
