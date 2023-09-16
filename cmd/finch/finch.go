@@ -70,7 +70,7 @@ func main() {
 		[][]float32{{1.0}, {0.0}, {0.0}, {0.0}},
 	)
 
-	p := tea.NewProgram(ui.InitialModel(&m), tea.WithAltScreen())
+	p := tea.NewProgram(ui.InitialModel(&m))
 	if _, err := p.Run(); err != nil {
 		log.Fatalf("error occurred when trying to start UI: %v", err)
 	}
