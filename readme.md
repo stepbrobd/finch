@@ -1,6 +1,6 @@
 # Finch
 
-Finch, a simple neural network framework and visualizer that uses genetic networks to train.
+Finch, a simple neural net framework and visualizer that uses genetic networks to train.
 
 ## Running Finch on example datasets
 
