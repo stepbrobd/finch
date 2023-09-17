@@ -71,19 +71,19 @@ func (m Model) View() string {
 
 	view += "Weights" + "\n\n"
 	for i := range m.Msg.Weights {
-		view += MkView(m.Model.GetWeights(), i) + "\n"
+		view += MkViewRed(m.Model.GetWeights(), i) + "\n"
 	}
 	view += "\n\n"
 
 	view += "Biases" + "\n\n"
 	for i := range m.Msg.Biases {
-		view += MkView(m.Model.GetBiases(), i) + "\n"
+		view += MkViewGreen(m.Model.GetBiases(), i) + "\n"
 	}
 	view += "\n\n"
 
 	view += "Outputs" + "\n\n"
 	for i := range m.Msg.Outputs {
-		view += MkView(m.Model.GetOutputs(), i) + "\n"
+		view += MkViewBlue(m.Model.GetOutputs(), i) + "\n"
 	}
 
 	return lipgloss.PlaceHorizontal(w, lipgloss.Center, view)
