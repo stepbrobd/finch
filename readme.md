@@ -2,6 +2,8 @@
 
 Finch, a simple neural net framework and visualizer that uses genetic networks to train.
 
+![Finch](./asset/demo.gif)
+
 ## Running Finch on example datasets
 
 **OR, NOR, XOR**:
