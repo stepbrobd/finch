@@ -32,6 +32,9 @@ func NewNet(sizes []int) Net {
 	}
 	// Allocate elements for weights and biases.
 	n.Values = make([]float32, lenVals, lenVals)
+	for idx := 0; idx < lenVals; idx++ {
+		n.Values[idx] = RandFloatRange(-0.1, 0.1)
+	}
 	// Allocate elements for outputs.
 	n.Outputs = make([]float32, lenOuts, lenOuts)
 	return n
