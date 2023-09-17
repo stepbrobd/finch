@@ -66,15 +66,17 @@ func (n *Net) FitFunc(examInputs, expecOutputs [][]float32, wg *sync.WaitGroup) 
 	wg.Done()
 }
 
-func (n *Net) Crossover(male, female Net) {
+func (n *Net) Crossover(male, female Net, wg *sync.WaitGroup) {
 	copy(n.Values, female.Values)
 	copy(n.Values, male.Values[:RandIntRange(1, len(female.Values)-1)])
+	wg.Done()
 }
 
-func (n *Net) Mutate(rate float32) {
+func (n *Net) Mutate(rate float32, wg *sync.WaitGroup) {
 	for idx := 0; idx < len(n.Values); idx++ {
 		if RandFloatRange(0.0, 1.0) <= rate {
 			n.Values[idx] += RandFloatRange(-0.25, 0.25)
 		}
 	}
+	wg.Done()
 }
