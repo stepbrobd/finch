@@ -78,7 +78,7 @@ func main() {
 
 	flag.Parse()
 
-	required := []string{"input", "output", "hidden", "population", "mutation"}
+	required := []string{"input", "output", "hidden", "population", "mutation", "example", "expected"}
 	seen := make(map[string]bool)
 	flag.Visit(func(f *flag.Flag) { seen[f.Name] = true })
 	for _, req := range required {
