@@ -4,13 +4,15 @@ Finch, a simple neural net framework and visualizer that uses genetic networks t
 
 ![Finch](./asset/demo.gif)
 
+Idea from [Darwin](https://github.com/pehringer/darwin) by [@pehringer](https://github.com/pehringer).
+
 ## Running Finch on example datasets
 
-**OR, NOR, XOR**:
+**Gates**:
 
 `-input=2 -output=1 -hidden=2`
 
-2 input neurons, 1 output neuron, 1 hidden layer with two neurons
+2 input neurons, 1 output neuron, 1 hidden layer with 2 neurons
 
 `-population=128 -mutation=0.025`
 
@@ -25,6 +27,24 @@ finch -input=2 -output=1 -hidden=2 -population=128 -mutation=0.025 -example=./da
 ```
 
 Remember to change which operation you want to run: OR, NOR, XOR.
+
+**Math**:
+
+`-input=20 -output=19 -hidden=6,6,6,6`
+
+20 input neurons, 19 output neurons, 4 hidden layers with 6 neurons each
+
+`-population=32768 -mutation=0.01`
+
+32768 individules in the population, with 1% mutation rate
+
+`-example=./data/math/add_input_data.csv -expected=./data/math/add_output_data.csv`
+
+dataset paths
+
+```shell
+finch -input=20 -output=19 -hidden=6,6,6,6 -population=32768 -mutation=0.01 -example=./data/math/add_input_data.csv -expected=./data/math/add_output_data.csv
+```
 
 **MNIST**:
 
